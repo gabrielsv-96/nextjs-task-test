@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation'
 import { trpc } from '../../../utils/trpc'
-import { TaskForm } from '../../../components/task-form'
+import { TaskForm } from '../../../components/task.form'
 
 export default function EditarTarefa() {
   const router  = useRouter()

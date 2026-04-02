@@ -1,5 +1,5 @@
 import { taskRouter } from '../server/task.router'
-import TaskTable from '../components/task-table'
+import TaskTable from '../components/task.table'
 
 export default async function Home() {
   const caller = taskRouter.createCaller({})

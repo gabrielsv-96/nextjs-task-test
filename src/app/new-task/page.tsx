@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { TaskForm } from '../../components/task-form'
+import { TaskForm } from '../../components/task.form'
 
 export default function NovaTarefa() {
   const router = useRouter()
