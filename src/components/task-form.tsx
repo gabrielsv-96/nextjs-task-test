@@ -45,6 +45,7 @@ export function TaskForm({ id, initialValues }: TaskFormProps) {
           value={form.titulo}
           onChange={e => setForm(f => ({ ...f, titulo: e.target.value }))}
           placeholder="Ex: Implementar autenticação"
+          maxLength={50}
           autoFocus
         />
       </div>
@@ -56,6 +57,7 @@ export function TaskForm({ id, initialValues }: TaskFormProps) {
           value={form.descricao}
           onChange={e => setForm(f => ({ ...f, descricao: e.target.value }))}
           placeholder="Detalhes da tarefa..."
+          maxLength={300}
           rows={4}
         />
       </div>
