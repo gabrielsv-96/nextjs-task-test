@@ -1,4 +1,5 @@
 import { TRPCProvider } from '../providers/trpc'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 export const metadata = { title: 'Tarefas' }
 
