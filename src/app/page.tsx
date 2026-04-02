@@ -1,53 +1,91 @@
-import Link from "next/link";
+'use client'
 
-import { LatestPost } from "~/app/_components/post";
-import { api, HydrateClient } from "~/trpc/server";
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { trpc } from '../utils/trpc'
 
-export default async function Home() {
-  const hello = await api.post.hello({ text: "from tRPC" });
+export default function Home() {
+  const router = useRouter()
+  const [editId, setEditId] = useState<number | null>(null)
+  const [editForm, setEditForm] = useState({ titulo: '', descricao: '' })
 
-  void api.post.getLatest.prefetch();
+  const utils = trpc.useUtils()
+  const { data: tasks = [] } = trpc.list.useQuery()
+
+  const invalidate = () => utils.list.invalidate()
+  const update = trpc.update.useMutation({ onSuccess: () => { invalidate(); setEditId(null) } })
+  const del = trpc.delete.useMutation({ onSuccess: invalidate })
 
   return (
-    <HydrateClient>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-          <h1 className="text-5xl font-extrabold tracking-tight sm:text-[5rem]">
-            Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
-          </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/usage/first-steps"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">First Steps →</h3>
-              <div className="text-lg">
-                Just the basics - Everything you need to know to set up your
-                database and authentication.
-              </div>
-            </Link>
-            <Link
-              className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 hover:bg-white/20"
-              href="https://create.t3.gg/en/introduction"
-              target="_blank"
-            >
-              <h3 className="text-2xl font-bold">Documentation →</h3>
-              <div className="text-lg">
-                Learn more about Create T3 App, the libraries it uses, and how
-                to deploy it.
-              </div>
-            </Link>
-          </div>
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-2xl text-white">
-              {hello ? hello.greeting : "Loading tRPC query..."}
-            </p>
-          </div>
+    <main>
+      <div>
+        <h1>Tarefas</h1>
+        <button onClick={() => router.push('/new-task')}>+ Nova tarefa</button>
+      </div>
 
-          <LatestPost />
-        </div>
-      </main>
-    </HydrateClient>
-  );
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Título</th>
+            <th>Descrição</th>
+            <th>Criação</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.map(task => (
+            <tr key={task.id}>
+              {editId === task.id ? (
+                <>
+                  <td>{task.id}</td>
+                  <td>
+                    <input value={editForm.titulo} onChange={e => setEditForm(f => ({ ...f, titulo: e.target.value }))}/>
+                  </td>
+                  <td>
+                    <input value={editForm.descricao} onChange={e => setEditForm(f => ({ ...f, descricao: e.target.value }))}/>
+                  </td>
+                  <td>
+                    {new Date(task.dataCriacao).toLocaleString('pt-BR')}
+                  </td>
+                  <td>
+                    <div>
+                      <button onClick={() => update.mutate({ id: task.id, ...editForm })}>Salvar</button>
+                      <button onClick={() => setEditId(null)}>Cancelar</button>
+                    </div>
+                  </td>
+                </>
+              ) : (
+                <>
+                  <td>{task.id}</td>
+                  <td>{task.titulo}</td>
+                  <td>{task.descricao}</td>
+                  <td>{new Date(task.dataCriacao).toLocaleString('pt-BR')}</td>
+                  <td>
+                    <div>
+                      <button onClick={() => {
+                        setEditId(task.id)
+                        setEditForm({ titulo: task.titulo, descricao: task.descricao })
+                      }}>
+                        Editar
+                      </button>
+                      <button onClick={() => del.mutate({ id: task.id })}>Excluir</button>
+                    </div>
+                  </td>
+                </>
+              )}
+            </tr>
+          ))}
+
+          {tasks.length === 0 && (
+            <tr>
+              <td>
+                Nenhuma tarefa cadastrada.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </main>
+  )
 }
