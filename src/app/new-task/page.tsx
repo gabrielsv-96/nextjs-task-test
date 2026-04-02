@@ -8,8 +8,8 @@ export default function NovaTarefa() {
 
   return (
     <main className="container py-4" style={{ maxWidth: 560 }}>
-      <button className="btn btn-link ps-0 mb-3" onClick={() => router.back()}>
-        ← Voltar
+      <button className="btn btn-danger mb-3" onClick={() => router.back()}>
+        Voltar
       </button>
 
       <h1 className="h3 mb-4">Nova tarefa</h1>

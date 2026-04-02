@@ -24,8 +24,8 @@ export default function EditarTarefa() {
     return (
       <main className="container py-4" style={{ maxWidth: 560 }}>
         <div className="alert alert-danger">Tarefa não encontrada.</div>
-        <button className="btn btn-link ps-0" onClick={() => router.push('/')}>
-          ← Voltar para listagem
+        <button className="btn btn-danger" onClick={() => router.push('/')}>
+          Voltar
         </button>
       </main>
     )
@@ -33,8 +33,8 @@ export default function EditarTarefa() {
 
   return (
     <main className="container py-4" style={{ maxWidth: 560 }}>
-      <button className="btn btn-link ps-0 mb-3" onClick={() => router.back()}>
-        ← Voltar
+      <button className="btn btn-danger mb-3" onClick={() => router.back()}>
+        Voltar
       </button>
 
       <h1 className="h3 mb-4">Editar tarefa #{task.id}</h1>
